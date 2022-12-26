@@ -1,4 +1,4 @@
-part of 'app_theme_cubit.dart';
+part of 'app_theme_bloc.dart';
 
 enum AppThemeMode { light, dark }
 

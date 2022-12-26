@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../cubits/temp_setting/temp_setting_cubit.dart';
+import 'package:flutter_bloc_cubit_weather_app/blocs/bloc_barrel.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -15,17 +14,17 @@ class SettingScreen extends StatelessWidget {
         child: Card(
           child: ListTile(
             leading: CircleAvatar(
-                child: Text(context.watch<TempSettingCubit>().state.tempUnit ==
+                child: Text(context.watch<TempSettingsBloc>().state.tempUnit ==
                         TempUnit.celsius
                     ? '℃'
                     : '℉')),
             title: const Text('Temperature Unit'),
             subtitle: const Text('Celsius/Farenheit'),
             trailing: Switch(
-              value: context.watch<TempSettingCubit>().state.tempUnit ==
+              value: context.watch<TempSettingsBloc>().state.tempUnit ==
                   TempUnit.celsius,
               onChanged: (_) {
-                context.read<TempSettingCubit>().toggleTempUnit();
+                context.read<TempSettingsBloc>().add(ToggleTempUnitEvent());
               },
             ),
           ),

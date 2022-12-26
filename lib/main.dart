@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_cubit_weather_app/cubits/app_theme/app_theme_cubit.dart';
-import 'cubits/temp_setting/temp_setting_cubit.dart';
-import 'cubits/weather/weather_cubit.dart';
+import 'blocs/bloc_barrel.dart';
 import 'repositories/weather_repository.dart';
 import 'services/weatherapi_services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,33 +23,29 @@ class MyApp extends StatelessWidget {
           weatherApiServices: WeatherApiServices(httpClient: http.Client())),
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<WeatherCubit>(
-            create: (context) => WeatherCubit(
+          BlocProvider<WeatherBloc>(
+            create: (context) => WeatherBloc(
                 weatherRepository: context.read<WeatherRepository>()),
           ),
-          BlocProvider<TempSettingCubit>(
-            create: (context) => TempSettingCubit(),
+          BlocProvider<TempSettingsBloc>(
+            create: (context) => TempSettingsBloc(),
           ),
-          BlocProvider<AppThemeCubit>(
-            create: (context) => AppThemeCubit(),
+          BlocProvider<AppThemeBloc>(
+            create: (context) =>
+                AppThemeBloc(weatherBloc: context.read<WeatherBloc>()),
           ),
         ],
-        child: BlocListener<WeatherCubit, WeatherState>(
-          listener: (context, state) {
-            context.read<AppThemeCubit>().settheme(state.weather.temp);
+        child: BlocBuilder<AppThemeBloc, AppThemeState>(
+          builder: (context, state) {
+            return MaterialApp(
+              title: 'Flutter Weather',
+              debugShowCheckedModeBanner: false,
+              theme: state.appThemeMode == AppThemeMode.light
+                  ? ThemeData.light().copyWith(brightness: Brightness.dark)
+                  : ThemeData.dark().copyWith(brightness: Brightness.dark),
+              home: const HomeScreen(),
+            );
           },
-          child: BlocBuilder<AppThemeCubit, AppThemeState>(
-            builder: (context, state) {
-              return MaterialApp(
-                title: 'Flutter Weather',
-                debugShowCheckedModeBanner: false,
-                theme: state.appThemeMode == AppThemeMode.light
-                    ? ThemeData.light().copyWith(brightness: Brightness.dark)
-                    : ThemeData.dark().copyWith(brightness: Brightness.dark),
-                home: const HomeScreen(),
-              );
-            },
-          ),
         ),
       ),
     );
