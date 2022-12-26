@@ -25,4 +25,9 @@ class AppThemeBloc extends Bloc<AppThemeEvent, AppThemeState> {
       emit(state.copyWith(appThemeMode: event.appThemeMode));
     });
   }
+    @override
+  Future<void> close() {
+    themeSubscription.cancel();
+    return super.close();
+  }
 }
